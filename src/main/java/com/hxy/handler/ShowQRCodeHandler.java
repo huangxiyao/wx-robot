@@ -105,7 +105,7 @@ public class ShowQRCodeHandler{
         		//等待二维码生成
         		ConfigRepository.put("qrCodeLoginingFlag", "true");
         		
-        		String url  = "localhost:8080";
+        		String url  = ConfigRepository.get("url");
         		
         		//开始写回二维码图片
                 final String filePath = new File("assets/qrcode.png").getCanonicalPath();
