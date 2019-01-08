@@ -542,25 +542,29 @@ public class WeChatApiImpl implements WeChatApi {
         TRobotServiceMapper mapper = SpringContextUtil.getBean(TRobotServiceMapper.class);
         List<TRobotServiceDao> robotServices = mapper.select();
         for (Account groupAccount : groupAccounts) {
-        	log.info("------------------groupAccount:{}",groupAccount);
+        	log.info("---------groupAccount:{}",groupAccount);
             groupUserNames.add(groupAccount.getUserName());
-            String nickName = groupAccount.getNickName();
-            log.info("groupKey:"+groupAccount.getUserName()+ ", groupName:" +nickName);
-        	//映射群组与本地服务的关系
-        	log.info("映射群组与本地机器人提供的服务关系》》》》》》》》》》》》》》》");
-        	if(robotServices != null){
-        		for(TRobotServiceDao robot : robotServices){
-        			log.info("groupName:"+nickName+ ", robotService描述:" + robot.getServiceDesc() + ", robotServiceType:"+ robot.getServiceType());
-            		if((StringUtils.isNotEmpty(robot.getServiceDesc()) && robot.getServiceDesc().contains(nickName)) || (StringUtils.isNotEmpty(nickName) && nickName.contains(robot.getServiceDesc()))){
-            			MapperRepository.put(groupAccount.getUserName(), robot.getServiceType());
-            			log.info("mapperKey:"+groupAccount.getUserName()+ ", type:" +robot.getServiceType()+ ", mapperValue:"+ robot.getServiceDesc());
-            			//break;
-            		}
-        		}
-        	}
-        	//将群组成员信息封装到本地集合中
-        	log.info("将群组成员信息封装到本地集合中");
+
         }
+        //映射群组与本地服务的关系
+        log.info("映射群组与本地机器人提供的服务关系》》》》》》》》》》》》》》》");
+        if(robotServices != null){
+            for(TRobotServiceDao robot : robotServices){
+                for (Account groupAccount : groupAccounts) {
+                    String nickName = groupAccount.getNickName();
+                    log.info("groupKey:"+groupAccount.getUserName()+ ", groupName:" +nickName);
+                    log.info("groupName:"+nickName+ ", robotService描述:" + robot.getServiceDesc() + ", robotServiceType:"+ robot.getServiceType());
+                    if((StringUtils.isNotEmpty(robot.getServiceDesc()) && robot.getServiceDesc().contains(nickName)) || (StringUtils.isNotEmpty(nickName) && nickName.contains(robot.getServiceDesc()))){
+                        MapperRepository.put(groupAccount.getUserName(), robot.getServiceType());
+                        log.info("mapperKey:"+groupAccount.getUserName()+ ", type:" +robot.getServiceType()+ ", mapperValue:"+ robot.getServiceDesc());
+                        //break;
+                    }
+                }
+
+            }
+        }
+        //将群组成员信息封装到本地集合中
+        log.info("将群组成员信息封装到本地集合中");
     }
 
     /**
@@ -611,24 +615,24 @@ public class WeChatApiImpl implements WeChatApi {
         			}
         		}
         	}
-        	
-            String nickName = groupAccount.getNickName();
-            log.info("groupKey:"+groupAccount.getUserName()+ ", groupName:" +nickName);
-        	//映射群组与本地服务的关系
-        	log.info("映射群组与本地机器人提供的服务关系》》》》》》》》》》》》》》》");
-        	if(robotServices != null){
-        		for(TRobotServiceDao robot : robotServices){
-        			log.info("groupName:"+nickName+ ", robotService描述:" + robot.getServiceDesc() + ", robotServiceType:"+ robot.getServiceType());
-            		if((StringUtils.isNotEmpty(robot.getServiceDesc()) && robot.getServiceDesc().contains(nickName)) || (StringUtils.isNotEmpty(nickName) && nickName.contains(robot.getServiceDesc()))){
-            			MapperRepository.put(groupAccount.getUserName(), robot.getServiceType());
-            			log.info("mapperKey:"+groupAccount.getUserName()+ ", type:" +robot.getServiceType()+ ", mapperValue:"+ robot.getServiceDesc());
-            			//break;
-            		}
-        		}
-        	}
-        	//将群组成员信息封装到本地集合中
-        	log.info("将群组成员信息封装到本地集合中，组列表更新");
-        	log.info("组列表------------{}",MapperRepository.map);
+        }
+        log.info("映射群组与本地机器人提供的服务关系》》》》》》》》》》》》》》》");
+        if(robotServices != null){
+            for(TRobotServiceDao robot : robotServices){
+                for (Account groupAccount : this.groupList) {
+                    String nickName = groupAccount.getNickName();
+                    log.info("groupKey:"+groupAccount.getUserName()+ ", groupName:" +nickName);
+                    log.info("groupName:"+nickName+ ", robotService描述:" + robot.getServiceDesc() + ", robotServiceType:"+ robot.getServiceType());
+                    if((StringUtils.isNotEmpty(robot.getServiceDesc()) && robot.getServiceDesc().contains(nickName)) || (StringUtils.isNotEmpty(nickName) && nickName.contains(robot.getServiceDesc()))){
+                        MapperRepository.put(groupAccount.getUserName(), robot.getServiceType());
+                        log.info("mapperKey:"+groupAccount.getUserName()+ ", type:" +robot.getServiceType()+ ", mapperValue:"+ robot.getServiceDesc());
+                        break;
+                    }
+                }
+            }
+            //将群组成员信息封装到本地集合中
+            log.info("将群组成员信息封装到本地集合中，组列表更新");
+            log.info("组列表------------{}",MapperRepository.map);
         }
     }
 
