@@ -75,10 +75,10 @@ public class ShowQRCodeHandler{
         try (final PrintWriter writer = resp.getWriter()) {
         	//等待二维码生成
         	//如果已经登陆了，这个也买会返回登陆成功的提示
-        	if(Boolean.valueOf(ConfigRepository.get("qrCodeLoginingFlag"))){
-        		htmlBuilder.append("<html><body><div style=\"text-align:center;border:white solid 1px;padding-top:10%;\"><div>登录中，请稍后！你已经登陆成功啦，请不要重复登陆</div></div></body></html>");
+        	if(Boolean.valueOf(ConfigRepository.get("qrCodeLoginingFlag")) && Boolean.valueOf(ConfigRepository.get("loginedFlag"))){
+        		htmlBuilder.append("<html><body><div style=\"text-align:center;border:white solid 1px;padding-top:10%;\"><div>登录中，请稍后！</div></div></body></html>");
             }else if(Boolean.valueOf(ConfigRepository.get("loginedFlag"))){
-        		htmlBuilder.append("<html><body><div style=\"text-align:center;border:white solid 1px;padding-top:10%;\"><div>登录中，请稍后！你已经登陆成功啦，请不要重复登陆</div></div></body></html>");
+        		htmlBuilder.append("<html><body><div style=\"text-align:center;border:white solid 1px;padding-top:10%;\"><div>你已经登陆成功啦，请不要重复登陆</div></div></body></html>");
             }else{
             	//初始化qq
             	//初始化qq客户端
@@ -108,7 +108,7 @@ public class ShowQRCodeHandler{
         		String url  = ConfigRepository.get("url");
         		
         		//开始写回二维码图片
-                final String filePath = new File("assets/qrcode.png").getCanonicalPath();
+                String filePath = new File("assets/qrcode.png").getCanonicalPath();
                 final byte[] data = IOUtils.toByteArray(new FileInputStream(filePath));
                 htmlBuilder.append("<!DOCTYPE html><html><head>"
                 		+ "<script src=\"http://code.jquery.com/jquery-1.7.2.min.js\"></script>"
