@@ -554,7 +554,7 @@ public class WeChatApiImpl implements WeChatApi {
             		if((StringUtils.isNotEmpty(robot.getServiceDesc()) && robot.getServiceDesc().contains(nickName)) || (StringUtils.isNotEmpty(nickName) && nickName.contains(robot.getServiceDesc()))){
             			MapperRepository.put(groupAccount.getUserName(), robot.getServiceType());
             			log.info("mapperKey:"+groupAccount.getUserName()+ ", type:" +robot.getServiceType()+ ", mapperValue:"+ robot.getServiceDesc());
-            			break;
+            			//break;
             		}
         		}
         	}
@@ -622,7 +622,7 @@ public class WeChatApiImpl implements WeChatApi {
             		if((StringUtils.isNotEmpty(robot.getServiceDesc()) && robot.getServiceDesc().contains(nickName)) || (StringUtils.isNotEmpty(nickName) && nickName.contains(robot.getServiceDesc()))){
             			MapperRepository.put(groupAccount.getUserName(), robot.getServiceType());
             			log.info("mapperKey:"+groupAccount.getUserName()+ ", type:" +robot.getServiceType()+ ", mapperValue:"+ robot.getServiceDesc());
-            			break;
+            			//break;
             		}
         		}
         	}
