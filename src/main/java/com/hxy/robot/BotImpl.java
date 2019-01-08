@@ -91,7 +91,8 @@ public class BotImpl extends WeChatBot{
     
     //向指定的群组发送消息
   	private void sendMessageToGroupID(String fromUserName, final String msgContent, List<TRobotMessageRepositoryDao> msgList, String toUserName,String fromMemberNickName) {
-  		//自定义message的处理方式
+  		log.info("查询请求参数：fromUserName:{}，msgContent:{},msgList:{},toUserName:{},fromMemberNickName:{}",fromUserName,msgContent,msgList,toUserName,fromMemberNickName);
+    	//自定义message的处理方式
   			String msg = "";
   			//默认机器人来回答
   			boolean anwserFlag = true;
@@ -103,7 +104,6 @@ public class BotImpl extends WeChatBot{
   				    	 //去掉value两边的空格
   				    	 value = value.toString();
   				     }
-  				     
   				     log.info("msgQuestion:"+msgQuestion +", value:"+value);
   				     if((StringUtils.isNotEmpty(msgQuestion) && msgQuestion.contains(msgContent.trim()) || (StringUtils.isNotEmpty(msgContent) && msgContent.contains(msgQuestion.trim())))){
   				    	 if(org.apache.commons.lang.StringUtils.contains(value, "http")){
