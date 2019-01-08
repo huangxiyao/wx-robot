@@ -49,7 +49,7 @@ public class BotImpl extends WeChatBot{
             	
             	queryContent = queryContent.replace(titleName, "").trim();
             	while(queryContent.startsWith(" ")){
-            		queryContent = queryContent.substring(1, queryContent.length()-1).trim();
+            		queryContent = queryContent.substring(1).trim();
             	}
             	String result = "";
             	//判断当前机器人服务的群
