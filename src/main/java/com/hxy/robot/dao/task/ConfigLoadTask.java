@@ -59,7 +59,7 @@ public class ConfigLoadTask implements BeanPostProcessor {
 				}
 				logger.info("数据库同步配置信息到系统内存任务执行结束，等待下次的执行。");
 			}
-		}, 10 * 60 * 1000l, TimeUnit.MINUTES.toMillis(5));
+		}, 10 * 60 * 1000l, TimeUnit.MINUTES.toMillis(10));
 	}
 	
 	/**
