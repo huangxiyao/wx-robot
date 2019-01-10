@@ -553,7 +553,7 @@ public class WeChatApiImpl implements WeChatApi {
                             SendMapperRepository.put(groupAccount.getUserName(),mapperList);
                         }
                         //避免集合中添加重复的元素
-                        if(mapperList.contains(robot.getServiceType())){
+                        if(!mapperList.contains(robot.getServiceType())){
                             mapperList.add(robot.getServiceType());
                         }
             			log.info(">>>>>>>>>>>>>加载成功：mapperKey:"+groupAccount.getUserName()+ ", groupName: "+nickName+"， type:" +robot.getServiceType()+ ", mapperValue:"+ robot.getServiceDesc());
@@ -629,7 +629,7 @@ public class WeChatApiImpl implements WeChatApi {
                             SendMapperRepository.put(groupAccount.getUserName(),mapperList);
                         }
                         //避免集合中添加重复的元素
-                        if(mapperList.contains(robot.getServiceType())){
+                        if(!mapperList.contains(robot.getServiceType())){
                             mapperList.add(robot.getServiceType());
                         }
             			log.info(">>>>>>>>>>>加载成功mapperKey:"+groupAccount.getUserName()+ ", groupName:"+nickName+", type:" +robot.getServiceType()+ ", mapperValue:"+ robot.getServiceDesc());
@@ -639,7 +639,7 @@ public class WeChatApiImpl implements WeChatApi {
         	}
         	//将群组成员信息封装到本地集合中
         	log.info("将群组成员信息封装到本地集合中，组列表更新");
-        	log.info("组列表------------{}",MapperRepository.map);
+        	log.info("组列表------------{}",SendMapperRepository.map);
         }
     }
 

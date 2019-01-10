@@ -40,7 +40,7 @@ public class BotImpl extends WeChatBot{
         message.getFromUserName();//可以用来指定发送消息给哪个群
         
         log.info("NickName:"+message.getFromNickName()+"userName:"+message.getFromUserName());
-        log.info("mapperResporty:{}",MapperRepository.map);
+        log.info("mapperResporty:{}",SendMapperRepository.map);
         String messageText = message.getText();
         message.getFromRemarkName();
         String titleName = "@" + message.getMineNickName();
