@@ -44,54 +44,60 @@ public class BotImpl extends WeChatBot{
         String messageText = message.getText();
         message.getFromRemarkName();
         String titleName = "@" + message.getMineNickName();
-        if(StringUtils.isNotEmpty(messageText)){
-        	if (messageText.startsWith(titleName.trim()) || messageText.contains(titleName.trim())) {
-            	log.info("message:{},nickName:{}",messageText,message.getMineNickName());
-            	String queryContent = messageText;
-            	
-            	queryContent = queryContent.replace(titleName, "").trim();
-            	while(queryContent.startsWith(" ")){
-            		queryContent = queryContent.substring(1).trim();
-            	}
-            	String result = "";
-            	//判断当前机器人服务的群
-            	if(SendMapperRepository.get(message.getFromUserName()) == null){
-            		this.api().sendText(message.getFromUserName(), "尚未提供对应服务，请申请权限");
-            		return;
-            	}
+        try{
+			if(StringUtils.isNotEmpty(messageText)){
+				if (messageText.startsWith(titleName.trim()) || messageText.contains(titleName.trim())) {
+					log.info("message:{},nickName:{}",messageText,message.getMineNickName());
+					String queryContent = messageText;
 
-				List actionTypeList = SendMapperRepository.get(message.getFromUserName());
-            	//默认list中的第一个元素是当前群对应的元素
-				int actionType = (int)actionTypeList.get(0);
-            	//获取数据库mapper
-            	TRobotMessageRepositoryMapper messageRepositoryMapper = SpringContextUtil.getBean(TRobotMessageRepositoryMapper.class);
-                
-            	switch(actionType){
-                	case 0:
-                		//智能机器人
-                		log.info("智能机器人群访问入口");
-                		sendToThreeMessage(message.getFromUserName(),result);
-                		
-                		break;
-                	case 1:
-                		//电影票
-                		log.info("电影票群访问入口");
-                		List<TRobotMessageRepositoryDao> messList = messageRepositoryMapper.selectByServiceType(1);
-                		sendMessageToGroupID(message.getFromUserName(),queryContent,messList,null,message.getFromMemberNickName());
-                		break;
-                	case 2:
-                		//党费
-                		log.info("党费群访问入口");
-                		List<TRobotMessageRepositoryDao> dangFeiMsgList = messageRepositoryMapper.selectByServiceType(2);
-                		sendMessageToGroupID(message.getFromUserName(),queryContent,dangFeiMsgList,null,message.getFromMemberNickName());
-                		break;
-                	default:
-                		log.info("默认群访问入口");
-                		sendMessageToGroupID(message.getFromUserName(),queryContent,null,null,message.getFromMemberNickName());
-                		break;
-                }
-            }
-        }
+					queryContent = queryContent.replace(titleName, "").trim();
+					while(queryContent.startsWith(" ")){
+						queryContent = queryContent.substring(1).trim();
+					}
+					String result = "";
+					//判断当前机器人服务的群
+					if(SendMapperRepository.get(message.getFromUserName()) == null){
+						this.api().sendText(message.getFromUserName(), "尚未提供对应服务，请申请权限");
+						return;
+					}
+
+					List actionTypeList = SendMapperRepository.get(message.getFromUserName());
+					//默认list中的第一个元素是当前群对应的元素
+					int actionType = (int)actionTypeList.get(0);
+					//获取数据库mapper
+					TRobotMessageRepositoryMapper messageRepositoryMapper = SpringContextUtil.getBean(TRobotMessageRepositoryMapper.class);
+
+					switch(actionType){
+						case 0:
+							//智能机器人
+							log.info("智能机器人群访问入口");
+							sendToThreeMessage(message.getFromUserName(),result);
+
+							break;
+						case 1:
+							//电影票
+							log.info("电影票群访问入口");
+							List<TRobotMessageRepositoryDao> messList = messageRepositoryMapper.selectByServiceType(1);
+							sendMessageToGroupID(message.getFromUserName(),queryContent,messList,null,message.getFromMemberNickName());
+							break;
+						case 2:
+							//党费
+							log.info("党费群访问入口");
+							List<TRobotMessageRepositoryDao> dangFeiMsgList = messageRepositoryMapper.selectByServiceType(2);
+							sendMessageToGroupID(message.getFromUserName(),queryContent,dangFeiMsgList,null,message.getFromMemberNickName());
+							break;
+						default:
+							log.info("默认群访问入口");
+							sendMessageToGroupID(message.getFromUserName(),queryContent,null,null,message.getFromMemberNickName());
+							break;
+					}
+				}
+			}
+		}catch (Exception e){
+        	log.error("服务异常，异常信息是：",e);
+			sendMessageToGroupID(message.getFromUserName(),"服务异常，请检查服务",null,null,message.getFromMemberNickName());
+		}
+
     }
     
     //向指定的群组发送消息
