@@ -4,6 +4,7 @@ package com.hxy.robot;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.hxy.robot.api.annotation.Bind;
 import com.hxy.robot.api.constant.Config;
@@ -15,6 +16,7 @@ import com.hxy.robot.dao.model.TRobotMessageRepositoryDao;
 import com.hxy.robot.integeration.electronic.ThirdProxy;
 import com.hxy.robot.service.robotservice.TuringQueryService;
 import com.hxy.robot.utils.MapperRepository;
+import com.hxy.robot.utils.SendMapperRepository;
 import com.hxy.robot.utils.SpringContextUtil;
 import com.hxy.robot.utils.StringUtils;
 
@@ -53,11 +55,14 @@ public class BotImpl extends WeChatBot{
             	}
             	String result = "";
             	//判断当前机器人服务的群
-            	if(MapperRepository.get(message.getFromUserName()) == null){
+            	if(SendMapperRepository.get(message.getFromUserName()) == null){
             		this.api().sendText(message.getFromUserName(), "尚未提供对应服务，请申请权限");
             		return;
             	}
-            	int actionType = (int) MapperRepository.get(message.getFromUserName());
+
+				List actionTypeList = SendMapperRepository.get(message.getFromUserName());
+            	//默认list中的第一个元素是当前群对应的元素
+				int actionType = (int)actionTypeList.get(0);
             	//获取数据库mapper
             	TRobotMessageRepositoryMapper messageRepositoryMapper = SpringContextUtil.getBean(TRobotMessageRepositoryMapper.class);
                 

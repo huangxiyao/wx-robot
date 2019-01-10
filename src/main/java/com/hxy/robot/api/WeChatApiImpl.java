@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.hxy.robot.utils.*;
 import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -61,12 +62,6 @@ import com.hxy.robot.api.response.WebSyncResponse;
 import com.hxy.robot.dao.mapper.TRobotServiceMapper;
 import com.hxy.robot.dao.model.TRobotServiceDao;
 import com.hxy.robot.exception.WeChatException;
-import com.hxy.robot.utils.ConfigRepository;
-import com.hxy.robot.utils.DateUtils;
-import com.hxy.robot.utils.MD5Checksum;
-import com.hxy.robot.utils.MapperRepository;
-import com.hxy.robot.utils.SpringContextUtil;
-import com.hxy.robot.utils.WeChatUtils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -552,7 +547,15 @@ public class WeChatApiImpl implements WeChatApi {
         		for(TRobotServiceDao robot : robotServices){
         			log.info("groupName:"+nickName+ ", robotService描述:" + robot.getServiceDesc() + ", robotServiceType:"+ robot.getServiceType());
             		if((StringUtils.isNotEmpty(robot.getServiceDesc()) && robot.getServiceDesc().contains(nickName)) || (StringUtils.isNotEmpty(nickName) && nickName.contains(robot.getServiceDesc()))){
-            			MapperRepository.put(groupAccount.getUserName(), robot.getServiceType());
+                        List mapperList = SendMapperRepository.get(groupAccount.getUserName());
+                        if(mapperList == null){
+                            mapperList = new ArrayList();
+                            SendMapperRepository.put(groupAccount.getUserName(),mapperList);
+                        }
+                        //避免集合中添加重复的元素
+                        if(mapperList.contains(robot.getServiceType())){
+                            mapperList.add(robot.getServiceType());
+                        }
             			log.info(">>>>>>>>>>>>>加载成功：mapperKey:"+groupAccount.getUserName()+ ", groupName: "+nickName+"， type:" +robot.getServiceType()+ ", mapperValue:"+ robot.getServiceDesc());
             			//break;
             		}
@@ -620,7 +623,15 @@ public class WeChatApiImpl implements WeChatApi {
         		for(TRobotServiceDao robot : robotServices){
         			log.info("groupName:"+nickName+ ", robotService描述:" + robot.getServiceDesc() + ", robotServiceType:"+ robot.getServiceType());
             		if((StringUtils.isNotEmpty(robot.getServiceDesc()) && robot.getServiceDesc().contains(nickName)) || (StringUtils.isNotEmpty(nickName) && nickName.contains(robot.getServiceDesc()))){
-            			MapperRepository.put(groupAccount.getUserName(), robot.getServiceType());
+                        List mapperList = SendMapperRepository.get(groupAccount.getUserName());
+                        if(mapperList == null){
+                            mapperList = new ArrayList();
+                            SendMapperRepository.put(groupAccount.getUserName(),mapperList);
+                        }
+                        //避免集合中添加重复的元素
+                        if(mapperList.contains(robot.getServiceType())){
+                            mapperList.add(robot.getServiceType());
+                        }
             			log.info(">>>>>>>>>>>加载成功mapperKey:"+groupAccount.getUserName()+ ", groupName:"+nickName+", type:" +robot.getServiceType()+ ", mapperValue:"+ robot.getServiceDesc());
             			//break;
             		}

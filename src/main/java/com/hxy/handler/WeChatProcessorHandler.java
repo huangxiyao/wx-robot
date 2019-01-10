@@ -15,6 +15,7 @@
  */
 package com.hxy.handler;
 
+import com.hxy.robot.utils.SendMapperRepository;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ import com.hxy.robot.utils.BeanRepository;
 import com.hxy.robot.utils.MapperRepository;
 import com.hxy.robot.utils.SpringContextUtil;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -70,9 +72,6 @@ public class WeChatProcessorHandler {
     /**
      * Handles QQ message.
      *
-     * @param context  the specified context
-     * @param request  the specified request
-     * @param response the specified response
      * @throws Exception exception
      */
     @RequestMapping(value = "/sendMessage",method=RequestMethod.POST)
@@ -84,15 +83,22 @@ public class WeChatProcessorHandler {
     	String serviceType = qqMsg.getType();
         String msg = qqMsg.getMessage();
         
-        Map<String, Object> map = MapperRepository.map;
+        Map<String, List> map = SendMapperRepository.map;
     	String groupId = null;
     	for(String key : map.keySet()){
-    		if(Integer.compare((int) map.get(key), Integer.valueOf(serviceType)) == 0){
-    			groupId = key;
-    			LOGGER.info("已发送" + msg + "] ，服务类型： [" + serviceType + "]");
-    			WeChatBot bot = (WeChatBot) BeanRepository.get("chatBot");
-    			bot.api().sendText(groupId, qqMsg.getMessage());
-    		}
+            List<String> typeList  = map.get(key);
+    	    if(typeList != null && !typeList.isEmpty()){
+    	        for(String typeKey : typeList){
+                    if(Integer.compare(Integer.valueOf(typeKey), Integer.valueOf(serviceType)) == 0){
+                        groupId = key;
+                        LOGGER.info("已发送" + msg + "] ，服务类型： [" + serviceType + "]");
+                        WeChatBot bot = (WeChatBot) BeanRepository.get("chatBot");
+                        bot.api().sendText(groupId, qqMsg.getMessage());
+                    }
+                }
+            }
+
+
     	}
         
         

@@ -1,21 +1,25 @@
 package com.hxy.robot.utils;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MapperRepository {
-	private MapperRepository(){
+/**
+ * 发送消息映射方式  类型：[群组]
+ */
+public class SendMapperRepository {
+	private SendMapperRepository(){
 		throw new IllegalAccessError("Utility class");
 	}
 	
-	public static ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<String, Object>();
-	public static void put(String key, Object value){
+	public static ConcurrentHashMap<String, List> map = new ConcurrentHashMap<String, List>();
+	public static void put(String key, List value){
 		map.put(key, value);
 	}
-	public static Object get(String key){
+	public static List get(String key){
 		return  map.get(key);
 	}
 	
-	public static Object delete(String key){
+	public static List delete(String key){
 		return map.remove(key);
 	}
 }

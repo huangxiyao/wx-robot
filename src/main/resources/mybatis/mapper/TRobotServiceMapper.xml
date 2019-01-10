@@ -6,7 +6,7 @@
     		SERVICE_TYPE serviceType, SERVICE_DESC serviceDesc,REVERSE1 reverse1, REVERSE2 reverse2, IS_EFFECTIVE isEffective
 		<![CDATA[
     		from T_ROBOT_SERVICE rosev
-    		where rosev.IS_EFFECTIVE = 'true'
+    		where rosev.IS_EFFECTIVE = 'true' ORDER BY serviceType asc
     		]]>
 	</select>
 	
