@@ -91,8 +91,8 @@ public class WeChatProcessorHandler {
     	        for(Object typeKey : typeList){
                     if(Integer.compare(Integer.valueOf(String.valueOf(typeKey)), Integer.valueOf(serviceType)) == 0){
                         groupId = key;
-                        LOGGER.info("已发送" + msg + "] ，服务类型： [" + serviceType + "]");
                         WeChatBot bot = (WeChatBot) BeanRepository.get("chatBot");
+                        LOGGER.info("已发送" + msg + "] ，服务类型： [" + serviceType + "]");
                         bot.api().sendText(groupId, qqMsg.getMessage());
                     }
                 }
