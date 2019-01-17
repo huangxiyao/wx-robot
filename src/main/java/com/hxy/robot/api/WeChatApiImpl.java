@@ -541,6 +541,7 @@ public class WeChatApiImpl implements WeChatApi {
             groupUserNames.add(groupAccount.getUserName());
             String nickName = groupAccount.getNickName();
             log.info("groupKey:"+groupAccount.getUserName()+ ", groupName:" +nickName);
+            MapperRepository.put(groupAccount.getUserName(),nickName);
         	//映射群组与本地服务的关系
         	log.info("映射群组与本地机器人提供的服务关系》》》》》》》》》》》》》》》");
         	if(robotServices != null){
@@ -617,6 +618,7 @@ public class WeChatApiImpl implements WeChatApi {
 
             String nickName = groupAccount.getNickName();
             log.info("groupKey:"+groupAccount.getUserName()+ ", groupName:" +nickName);
+            MapperRepository.put(groupAccount.getUserName(),nickName);
         	//映射群组与本地服务的关系
         	log.info("映射群组与本地机器人提供的服务关系》》》》》》》》》》》》》》》");
         	if(robotServices != null){

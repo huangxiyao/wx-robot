@@ -92,7 +92,7 @@ public class WeChatProcessorHandler {
                     if(Integer.compare(Integer.valueOf(String.valueOf(typeKey)), Integer.valueOf(serviceType)) == 0){
                         groupId = key;
                         WeChatBot bot = (WeChatBot) BeanRepository.get("chatBot");
-                        LOGGER.info("已发送" + msg + "] ，服务类型： [" + serviceType + "]");
+                        LOGGER.info("已发送" + msg + "] ，服务类型： [" + serviceType + "], 发送群："+MapperRepository.get(groupId));
                         bot.api().sendText(groupId, qqMsg.getMessage());
                     }
                 }
