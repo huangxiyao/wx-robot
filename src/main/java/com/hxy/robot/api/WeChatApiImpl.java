@@ -901,7 +901,7 @@ public class WeChatApiImpl implements WeChatApi {
                     !groupUserNames.contains(message.getFromUserName())) {
                 this.groupUserNames.add(message.getFromUserName());
                 log.info("本地缓存的群名列表没有当前群, 执行更新操作------------");
-                this.loadGroupList();
+                //this.loadGroupList();
                 
             }
             if (message.getToUserName().contains(GROUP_IDENTIFY) &&
@@ -944,8 +944,8 @@ public class WeChatApiImpl implements WeChatApi {
             log.warn("消息类型: {}", message.msgType());
             log.warn("消息主体: {}", WeChatUtils.toPrettyJson(message));
         } else {
-        	if(MapperRepository.get(message.getFromUserName()) == null){
-        		log.info("映射群组与本地机器人提供的服务关系》》》》》》》》》》》》》》》");
+        	if(message.getFromUserName().contains(GROUP_IDENTIFY) && MapperRepository.get(message.getFromUserName()) == null){
+        		log.info("接收消息时发现当前群组没有映射进来，重新映射群组与本地机器人提供的服务关系");
                 String nickName = fromAccount.getNickName();
            	 	TRobotServiceMapper mapper = SpringContextUtil.getBean(TRobotServiceMapper.class);
                 List<TRobotServiceDao> robotServices = mapper.select();
@@ -955,6 +955,15 @@ public class WeChatApiImpl implements WeChatApi {
                 		if((StringUtils.isNotEmpty(robot.getServiceDesc()) && robot.getServiceDesc().contains(nickName)) || (StringUtils.isNotEmpty(nickName) && nickName.contains(robot.getServiceDesc()))){
                 			MapperRepository.put(fromAccount.getUserName(), robot.getServiceType());
                 			log.info("mapperKey:"+fromAccount.getUserName()+ ", type:" +robot.getServiceType()+ ", mapperValue:"+ robot.getServiceDesc());
+                            List mapperList = SendMapperRepository.get(fromAccount.getUserName());
+                            if(mapperList == null){
+                                mapperList = new ArrayList();
+                                SendMapperRepository.put(fromAccount.getUserName(),mapperList);
+                            }
+                            //避免集合中添加重复的元素
+                            if(!mapperList.contains(robot.getServiceType())){
+                                mapperList.add(robot.getServiceType());
+                            }
                 			break;
                 		}
             		}
