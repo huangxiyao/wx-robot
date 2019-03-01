@@ -82,8 +82,9 @@ public class WeChatProcessorHandler {
         
     	String serviceType = qqMsg.getType();
         String msg = qqMsg.getMessage();
-        
+
         Map<String, List> map = SendMapperRepository.map;
+        LOGGER.info("当前已经映射的群信息是：{}",JSON.toJSONString(map));
     	String groupId = null;
     	for(String key : map.keySet()){
             List typeList  = map.get(key);
