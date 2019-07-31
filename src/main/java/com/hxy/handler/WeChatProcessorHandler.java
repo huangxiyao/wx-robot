@@ -152,8 +152,8 @@ public class WeChatProcessorHandler {
 
     @Test
     public void test(){
-        ConfigRepository.put("DingDingTokenPhoneNum","17317532008");
-        ConfigRepository.put("DingDingAccessToken","25a5d7a2b84cba6af493f69f88b94293dc2b8de029bdc12fcf4156f2bc7dd917");
+        ConfigRepository.put("DingDingTokenPhoneNum","");
+        ConfigRepository.put("DingDingAccessToken","");
         RecieveQQMsg qqMsg =  new RecieveQQMsg();
         qqMsg.setMessage("你好，\n炸了");
         try{
