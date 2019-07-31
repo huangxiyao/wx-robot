@@ -1,7 +1,6 @@
 package com.hxy.handler;
 
 import com.dingtalk.api.DefaultDingTalkClient;
-import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiRobotSendRequest;
 import com.dingtalk.api.response.OapiRobotSendResponse;
 import com.hxy.robot.utils.ConfigRepository;
@@ -18,9 +17,10 @@ import java.util.List;
  */
 public class DingdingTalkHandler {
 
-    Logger logger = LoggerFactory.getLogger(DingdingTalkHandler.class);
+    static Logger  logger = LoggerFactory.getLogger(DingdingTalkHandler.class);
 
-    public void sendMessage(String content){
+
+    public static void sendMessage(String content){
     logger.info("进入钉钉客户端工具发送方法》》》》》》》》》》》");
 
         /**
@@ -46,7 +46,7 @@ public class DingdingTalkHandler {
         try{
             String accesstoken = ConfigRepository.get("DingDingAccessToken");
             String serviceUrl = "https://oapi.dingtalk.com/robot/send?access_token="+accesstoken;
-            DingTalkClient client = new DefaultDingTalkClient(serviceUrl);
+            DefaultDingTalkClient client = new DefaultDingTalkClient(serviceUrl);
             OapiRobotSendRequest request = new OapiRobotSendRequest();
             request.setMsgtype("text");
             OapiRobotSendRequest.Text text = new OapiRobotSendRequest.Text();

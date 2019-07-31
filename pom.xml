@@ -154,7 +154,7 @@
 		</plugins>
         <resources>
             <resource>
-                <directory>${project.basedir}/src/main/lib/</directory>
+                <directory>${basedir}/lib/</directory>
                 <targetPath>BOOT-INF/lib/</targetPath>
                 <includes>
                     <include>**/*.jar</include>

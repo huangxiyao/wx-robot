@@ -16,15 +16,10 @@
 package com.hxy.handler;
 
 import com.hxy.robot.utils.*;
-import org.json.JSONObject;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,17 +31,10 @@ import com.alibaba.fastjson.JSON;
 import com.hxy.robot.WeChatBot;
 import com.hxy.robot.api.Response;
 import com.hxy.robot.api.model.RecieveQQMsg;
-import com.hxy.robot.service.robotservice.BaiduQueryService;
-import com.hxy.robot.service.robotservice.TuringQueryService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.*;
 
 /**
  * QQ processor.
@@ -89,6 +77,7 @@ public class WeChatProcessorHandler {
         }
 
         ExecutorService exe = Executors.newFixedThreadPool(2);
+        ExecutorCompletionService ecs = new ExecutorCompletionService(exe);
         try {
             LOGGER.info("发送信息到微信客户端，信息是：{}",qqMsg);
             exe.execute(()-> executeWeChatSync(qqMsg));
@@ -97,6 +86,7 @@ public class WeChatProcessorHandler {
         } catch (Exception e) {
             LOGGER.error("执行任务发生异常",e);
         }
+
 
         exe.shutdown();
         while (!exe.isTerminated()) {
@@ -121,7 +111,6 @@ public class WeChatProcessorHandler {
         try{
             String serviceType = qqMsg.getType();
             String msg = qqMsg.getMessage();
-
             Map<String, List> map = SendMapperRepository.map;
             LOGGER.info("当前已经映射的群信息是：{}",JSON.toJSONString(map));
             String groupId = null;
@@ -146,8 +135,15 @@ public class WeChatProcessorHandler {
     }
 
     public void executeDingDingSync(RecieveQQMsg qqMsg){
-        DingdingTalkHandler talkHandler =  new DingdingTalkHandler();
-        talkHandler.sendMessage(qqMsg.getMessage());
+        try{
+            LOGGER.info("进入到executeDingDingSync方法进行执行！");
+            DingdingTalkHandler talkHandler =  new DingdingTalkHandler();
+            LOGGER.info("进入到executeDingDingSync方法进行执行！8888888");
+            talkHandler.sendMessage(qqMsg.getMessage());
+        }catch (Exception e){
+            LOGGER.error("异常信息是",e);
+        }
+
     }
 
     @Test
