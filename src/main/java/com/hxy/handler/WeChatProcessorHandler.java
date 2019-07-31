@@ -15,8 +15,9 @@
  */
 package com.hxy.handler;
 
-import com.hxy.robot.utils.SendMapperRepository;
+import com.hxy.robot.utils.*;
 import org.json.JSONObject;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +38,12 @@ import com.hxy.robot.api.Response;
 import com.hxy.robot.api.model.RecieveQQMsg;
 import com.hxy.robot.service.robotservice.BaiduQueryService;
 import com.hxy.robot.service.robotservice.TuringQueryService;
-import com.hxy.robot.utils.BeanRepository;
-import com.hxy.robot.utils.MapperRepository;
-import com.hxy.robot.utils.SpringContextUtil;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,18 +78,56 @@ public class WeChatProcessorHandler {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Response qq(@RequestBody RecieveQQMsg qqMsg) throws Exception {
     	LOGGER.info("请求参数是：{}",JSON.toJSONString(qqMsg));
-    	Response res = new Response();
-        
-    	String serviceType = qqMsg.getType();
+
+        Response res = new Response();
+        if (org.codehaus.plexus.util.StringUtils.isBlank(qqMsg.getMessage())) {
+            LOGGER.warn("Empty msg body");
+            res.setSuccess(false);
+            res.setErrorCode("999998");
+            res.setErrorDesc("SC_BAD_REQUEST");
+            return res;
+        }
+
+        ExecutorService exe = Executors.newFixedThreadPool(2);
+        try {
+            LOGGER.info("发送信息到微信客户端，信息是：{}",qqMsg);
+            exe.execute(()-> executeWeChatSync(qqMsg));
+            LOGGER.info("发送信息到钉钉客户端，信息是：{}",qqMsg);
+            exe.execute(()-> executeDingDingSync(qqMsg));
+        } catch (Exception e) {
+            LOGGER.error("执行任务发生异常",e);
+        }
+
+        exe.shutdown();
+        while (!exe.isTerminated()) {
+            try {
+                Thread.sleep(200);
+            } catch (Exception e) {
+                LOGGER.info("线程休眠异常");
+            }
+        }
+
+        res.setErrorCode("000000");
+        res.setErrorDesc("成功！");
+        res.setSuccess(true);
+        return res;
+    }
+
+    /**
+     * 微信客户端
+     * @param qqMsg
+     */
+    public void executeWeChatSync(RecieveQQMsg qqMsg){
+        String serviceType = qqMsg.getType();
         String msg = qqMsg.getMessage();
 
         Map<String, List> map = SendMapperRepository.map;
         LOGGER.info("当前已经映射的群信息是：{}",JSON.toJSONString(map));
-    	String groupId = null;
-    	for(String key : map.keySet()){
+        String groupId = null;
+        for(String key : map.keySet()){
             List typeList  = map.get(key);
-    	    if(typeList != null && !typeList.isEmpty()){
-    	        for(Object typeKey : typeList){
+            if(typeList != null && !typeList.isEmpty()){
+                for(Object typeKey : typeList){
                     if(Integer.compare(Integer.valueOf(String.valueOf(typeKey)), Integer.valueOf(serviceType)) == 0){
                         groupId = key;
                         WeChatBot bot = (WeChatBot) BeanRepository.get("chatBot");
@@ -98,21 +136,29 @@ public class WeChatProcessorHandler {
                     }
                 }
             }
-    	}
-        
-        
-        if (org.codehaus.plexus.util.StringUtils.isBlank(msg)) {
-            LOGGER.warn("Empty msg body");
-            res.setSuccess(false);
-            res.setErrorCode("999998");
-        	res.setErrorDesc("SC_BAD_REQUEST");
-            return res;
         }
 
+
+
+
         LOGGER.info("Push QQ groups [msg=" + msg + "]");
-        res.setErrorCode("000000");
-        res.setErrorDesc("成功！");
-        res.setSuccess(true);
-        return res;
+    }
+
+    public void executeDingDingSync(RecieveQQMsg qqMsg){
+        DingdingTalkHandler talkHandler =  new DingdingTalkHandler();
+        talkHandler.sendMessage(qqMsg.getMessage());
+    }
+
+    @Test
+    public void test(){
+        ConfigRepository.put("DingDingTokenPhoneNum","17317532008|18855585390");
+        ConfigRepository.put("DingDingAccessToken","25a5d7a2b84cba6af493f69f88b94293dc2b8de029bdc12fcf4156f2bc7dd917");
+        RecieveQQMsg qqMsg =  new RecieveQQMsg();
+        qqMsg.setMessage("你好，\n炸了");
+        try{
+            qq(qqMsg);
+        }catch (Exception e){
+
+        }
     }
 }
