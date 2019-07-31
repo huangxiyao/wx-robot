@@ -125,7 +125,16 @@
             <artifactId>lombok</artifactId>
             <version>1.16.18</version>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
+
+      <dependency>
+          <groupId>com.hxy</groupId>
+          <artifactId>taobao-sdk-java</artifactId>
+          <version>1.0</version>
+          <scope>system</scope>
+          <systemPath>${basedir}/lib/taobao-sdk-java.jar</systemPath>
+      </dependency>
+
                
         <dependency>
             <groupId>commons-io</groupId>
@@ -145,12 +154,17 @@
 		</plugins>
         <resources>
             <resource>
-                <directory>${project.basedir}/src/main/lib</directory>
+                <directory>${project.basedir}/src/main/lib/</directory>
                 <targetPath>BOOT-INF/lib/</targetPath>
                 <includes>
                     <include>**/*.jar</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>BOOT-INF/classes/</targetPath>
+            </resource>
+
         </resources>
 	</build>
 </project>
