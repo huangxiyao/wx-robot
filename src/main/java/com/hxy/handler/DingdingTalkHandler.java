@@ -21,24 +21,7 @@ public class DingdingTalkHandler {
     Logger logger = LoggerFactory.getLogger(DingdingTalkHandler.class);
 
     public void sendMessage(String content){
-        String accesstoken = ConfigRepository.get("DingDingAccessToken");
-        String serviceUrl = "https://oapi.dingtalk.com/robot/send?access_token="+accesstoken;
-        DingTalkClient client = new DefaultDingTalkClient(serviceUrl);
-        OapiRobotSendRequest request = new OapiRobotSendRequest();
-        request.setMsgtype("text");
-        OapiRobotSendRequest.Text text = new OapiRobotSendRequest.Text();
-        text.setContent(content);
-        request.setText(text);
-
-        //获取配置要@的手机号
-       String digndingTokenPhoneNo = ConfigRepository.get("DingDingTokenPhoneNum");
-       List<String> phoneList = new ArrayList<>();
-        if(StringUtils.isNotEmpty(digndingTokenPhoneNo)){
-            phoneList = Arrays.asList(digndingTokenPhoneNo.split("|"));
-            OapiRobotSendRequest.At at = new OapiRobotSendRequest.At();
-            at.setAtMobiles(phoneList);
-            request.setAt(at);
-        }
+    logger.info("进入钉钉客户端工具发送方法》》》》》》》》》》》");
 
         /**
          * request.setMsgtype("link");
@@ -61,6 +44,24 @@ public class DingdingTalkHandler {
          */
 
         try{
+            String accesstoken = ConfigRepository.get("DingDingAccessToken");
+            String serviceUrl = "https://oapi.dingtalk.com/robot/send?access_token="+accesstoken;
+            DingTalkClient client = new DefaultDingTalkClient(serviceUrl);
+            OapiRobotSendRequest request = new OapiRobotSendRequest();
+            request.setMsgtype("text");
+            OapiRobotSendRequest.Text text = new OapiRobotSendRequest.Text();
+            text.setContent(content);
+            request.setText(text);
+
+            //获取配置要@的手机号
+            String digndingTokenPhoneNo = ConfigRepository.get("DingDingTokenPhoneNum");
+            List<String> phoneList = new ArrayList<>();
+            if(StringUtils.isNotEmpty(digndingTokenPhoneNo)){
+                phoneList = Arrays.asList(digndingTokenPhoneNo.split("|"));
+                OapiRobotSendRequest.At at = new OapiRobotSendRequest.At();
+                at.setAtMobiles(phoneList);
+                request.setAt(at);
+            }
             logger.info("通知钉钉群信息参数是：{}",request);
             OapiRobotSendResponse response = client.execute(request);
             logger.info("发送信息到钉钉群成功");

@@ -118,30 +118,31 @@ public class WeChatProcessorHandler {
      * @param qqMsg
      */
     public void executeWeChatSync(RecieveQQMsg qqMsg){
-        String serviceType = qqMsg.getType();
-        String msg = qqMsg.getMessage();
+        try{
+            String serviceType = qqMsg.getType();
+            String msg = qqMsg.getMessage();
 
-        Map<String, List> map = SendMapperRepository.map;
-        LOGGER.info("当前已经映射的群信息是：{}",JSON.toJSONString(map));
-        String groupId = null;
-        for(String key : map.keySet()){
-            List typeList  = map.get(key);
-            if(typeList != null && !typeList.isEmpty()){
-                for(Object typeKey : typeList){
-                    if(Integer.compare(Integer.valueOf(String.valueOf(typeKey)), Integer.valueOf(serviceType)) == 0){
-                        groupId = key;
-                        WeChatBot bot = (WeChatBot) BeanRepository.get("chatBot");
-                        LOGGER.info("已发送" + msg + "] ，服务类型： [" + serviceType + "], 发送群："+MapperRepository.get(groupId));
-                        bot.api().sendText(groupId, qqMsg.getMessage());
+            Map<String, List> map = SendMapperRepository.map;
+            LOGGER.info("当前已经映射的群信息是：{}",JSON.toJSONString(map));
+            String groupId = null;
+            for(String key : map.keySet()){
+                List typeList  = map.get(key);
+                if(typeList != null && !typeList.isEmpty()){
+                    for(Object typeKey : typeList){
+                        if(Integer.compare(Integer.valueOf(String.valueOf(typeKey)), Integer.valueOf(serviceType)) == 0){
+                            groupId = key;
+                            WeChatBot bot = (WeChatBot) BeanRepository.get("chatBot");
+                            LOGGER.info("已发送" + msg + "] ，服务类型： [" + serviceType + "], 发送群："+MapperRepository.get(groupId));
+                            bot.api().sendText(groupId, qqMsg.getMessage());
+                        }
                     }
                 }
             }
+            LOGGER.info("Push WX groups [msg=" + msg + "]");
+        }catch (Exception e){
+            LOGGER.error("微信消息发送失败，异常信息是",e);
         }
 
-
-
-
-        LOGGER.info("Push QQ groups [msg=" + msg + "]");
     }
 
     public void executeDingDingSync(RecieveQQMsg qqMsg){
@@ -151,7 +152,7 @@ public class WeChatProcessorHandler {
 
     @Test
     public void test(){
-        ConfigRepository.put("DingDingTokenPhoneNum","17317532008|18855585390");
+        ConfigRepository.put("DingDingTokenPhoneNum","17317532008");
         ConfigRepository.put("DingDingAccessToken","25a5d7a2b84cba6af493f69f88b94293dc2b8de029bdc12fcf4156f2bc7dd917");
         RecieveQQMsg qqMsg =  new RecieveQQMsg();
         qqMsg.setMessage("你好，\n炸了");
